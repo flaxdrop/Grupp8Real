@@ -82,7 +82,7 @@ bool askToLoadGame()
     }
 }
 
-void askToSaveOrContinue()
+void askToSaveOrContinue(int balance)
 {
     char choice;
     std::cout << "Do you want to save your game? (y/n): ";
@@ -94,9 +94,7 @@ void askToSaveOrContinue()
         if (outfile.is_open())
         {
 
-            outfile << "Player score: " << "\n";
-            outfile << "Dealer score: " << "\n";
-
+            outfile << "Player score: " << balance << "\n";
             outfile.close();
             std::cout << "Game saved successfully!\n";
         }
@@ -363,6 +361,6 @@ int main()
     }
     std::cout << "You have " << balance << " Left!";
 
-    askToSaveOrContinue();
+    askToSaveOrContinue(balance);
     return 0;
 }

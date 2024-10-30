@@ -65,49 +65,56 @@ void displayTwistRules()
     std::cout << "-----------------------------------------------------------------------------------------------\n\n\n";
 }
 
-bool askToLoadGame()
+bool askToLoadGame(int &playerScore) 
 {
     std::ifstream infile("highscore.txt");
-    if (infile.good())
+    if (infile.good()) 
     {
         char choice;
         std::cout << "A saved highscore file was found. Do you want to load the game? (y/n): ";
         std::cin >> choice;
-        return (choice == 'y' || choice == 'Y');
-    }
-    else
+
+        if (choice == 'y' || choice == 'Y') 
+        {
+                if (infile >> playerScore) 
+                {
+                std::cout << "Game loaded successfully! Player score: " << playerScore << "\n";
+                return true;
+            } else 
+            {
+                std::cout << "Error reading saved game data.\n";
+            }
+        }
+    } else 
     {
         std::cout << "No saved game found.\n";
-        return false;
     }
+    return false;
 }
 
-void askToSaveOrContinue(int balance)
+
+void askToSaveOrContinue(int balance) 
 {
     char choice;
     std::cout << "Do you want to save your game? (y/n): ";
     std::cin >> choice;
 
-    if (choice == 'y' || choice == 'Y')
-    {
+    if (choice == 'y' || choice == 'Y') {
         std::ofstream outfile("highscore.txt");
-        if (outfile.is_open())
+        if (outfile.is_open()) 
         {
-
-            outfile << "Player score: " << balance << "\n";
-            outfile.close();
+            outfile << balance << "\n";
             std::cout << "Game saved successfully!\n";
-        }
-        else
+        } else 
         {
             std::cout << "Error saving the game.\n";
         }
-    }
-    else
+    } else 
     {
         std::cout << "Continuing the game...\n";
     }
 }
+
 
 // function to print game menu
 // int displayMenu()
@@ -289,7 +296,10 @@ int main()
     std::string playerName;
     std::vector<cardInfo> playerCards = {};
     const int startBalance = 500;
-    int choice, balance, bet;
+    int choice, bet;
+    int balance = 0;
+    bool gameLoaded = false;
+    
     std::cout << "Select an option:\n";
     std::cout << "1. Show game rules\n";
     std::cout << "2. Load saved game\n";
@@ -306,7 +316,7 @@ int main()
 
     case 2:
         std::cout << "Loading saved game...\n";
-        askToLoadGame();
+        gameLoaded = askToLoadGame(balance);
         break;
 
     case 3:

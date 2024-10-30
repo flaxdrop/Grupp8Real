@@ -112,23 +112,23 @@ void askToSaveOrContinue()
 }
 
 // function to print game menu
-int displayMenu()
-{
-    bool gameRunning = true;
+// int displayMenu()
+// {
+//     bool gameRunning = true;
 
-    while (gameRunning)
-    {
-        int option;
-        std::cout << "Select an option:\n";
-        std::cout << "1. Show game rules\n";
-        std::cout << "2. Load saved game\n";
-        std::cout << "3. Start a new game\n";
-        std::cout << "4. Exit\n";
-        std::cout << "Enter your choice: ";
-        std::cin >> option;
-        return option;
-    }
-}
+//     while (gameRunning)
+//     {
+//         int option;
+//         std::cout << "Select an option:\n";
+//         std::cout << "1. Show game rules\n";
+//         std::cout << "2. Load saved game\n";
+//         std::cout << "3. Start a new game\n";
+//         std::cout << "4. Exit\n";
+//         std::cout << "Enter your choice: ";
+//         std::cin >> option;
+//         return option;
+//     }
+// }
 class Deck
 {
 public:
@@ -292,7 +292,13 @@ int main()
     std::vector<cardInfo> playerCards = {};
     const int startBalance = 500;
     int choice, balance, bet;
-    choice = displayMenu();
+    std::cout << "Select an option:\n";
+    std::cout << "1. Show game rules\n";
+    std::cout << "2. Load saved game\n";
+    std::cout << "3. Start a new game\n";
+    std::cout << "4. Exit\n";
+    std::cout << "Enter your choice: ";
+    std::cin >> choice;
     switch (choice)
     {
     case 1:
@@ -307,7 +313,6 @@ int main()
 
     case 3:
         std::cout << "Starting a new game.\n";
-        std::string playerName = getPlayerName();
         balance = startBalance;
         break;
 
@@ -319,6 +324,7 @@ int main()
         std::cout << "Invalid option, please try again.\n";
         break;
     }
+    std::string playerName = getPlayerName();
     bool isBetValid;
     do
     {

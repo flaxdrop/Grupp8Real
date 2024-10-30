@@ -65,55 +65,58 @@ void displayTwistRules()
     std::cout << "-----------------------------------------------------------------------------------------------\n\n\n";
 }
 
-
-bool askToLoadGame() 
+bool askToLoadGame()
 {
     std::ifstream infile("highscore.txt");
-    if (infile.good()) 
+    if (infile.good())
     {
         char choice;
         std::cout << "A saved highscore file was found. Do you want to load the game? (y/n): ";
         std::cin >> choice;
         return (choice == 'y' || choice == 'Y');
-    } else 
+    }
+    else
     {
         std::cout << "No saved game found.\n";
         return false;
     }
 }
 
-void askToSaveOrContinue() 
+void askToSaveOrContinue()
 {
     char choice;
     std::cout << "Do you want to save your game? (y/n): ";
     std::cin >> choice;
 
-    if (choice == 'y' || choice == 'Y') 
+    if (choice == 'y' || choice == 'Y')
     {
         std::ofstream outfile("highscore.txt");
-        if (outfile.is_open()) 
+        if (outfile.is_open())
         {
-           
+
             outfile << "Player score: " << "\n";
             outfile << "Dealer score: " << "\n";
-         
+
             outfile.close();
             std::cout << "Game saved successfully!\n";
-        } else 
+        }
+        else
         {
             std::cout << "Error saving the game.\n";
         }
-    } else {
+    }
+    else
+    {
         std::cout << "Continuing the game...\n";
-    }     
+    }
 }
 
-//function to print game menu
-void runGameMenu() 
+// function to print game menu
+int displayMenu()
 {
     bool gameRunning = true;
 
-    while (gameRunning) 
+    while (gameRunning)
     {
         int option;
         std::cout << "Select an option:\n";
@@ -123,35 +126,9 @@ void runGameMenu()
         std::cout << "4. Exit\n";
         std::cout << "Enter your choice: ";
         std::cin >> option;
-
-        switch (option) 
-        {
-            case 1:
-                displayBlackjackRules();
-                displayTwistRules();
-                break;
-
-            case 2:
-                std::cout << "Loading saved game...\n";
-                askToLoadGame();
-                break;
-
-            case 3:
-                std::cout << "Starting a new game.\n";
-                gameRunning = false;
-                break;
-
-            case 4:
-                std::cout << "Exiting the game, goodbye!.\n";
-                break;
-
-            default:
-                std::cout << "Invalid option, please try again.\n";
-                break;
-        }
+        return option;
     }
 }
-
 class Deck
 {
 public:
@@ -205,8 +182,9 @@ int calculateHandValue(const std::vector<cardInfo> &hand)
     }
     return totalValue;
 }
-void determineWinner(int playerHandValue, int dealerHandValue)
+bool determineWinner(int playerHandValue, int dealerHandValue)
 {
+    bool youWon = false;
     std::cout << "Final Hand Values:\n";
     std::cout << "Player's Hand Value: " << playerHandValue << "\n";
     std::cout << "Dealer's Hand Value: " << dealerHandValue << "\n";
@@ -215,29 +193,35 @@ void determineWinner(int playerHandValue, int dealerHandValue)
         if (playerHandValue >= dealerHandValue)
         {
             std::cout << "Dealer wins!\n";
+            youWon = false;
         }
         else
         {
             std::cout << "Player wins!\n";
+            youWon = true;
         }
     }
     else if (playerHandValue > 21)
     {
         std::cout << "Player busts! Dealer wins.\n";
+        youWon = false;
     }
     else if (dealerHandValue > 21)
     {
         std::cout << "Dealer busts! Player wins.\n";
+        youWon = true;
     }
     else
     {
         if (playerHandValue >= dealerHandValue)
         {
             std::cout << "Dealer wins!\n";
+            youWon = true;
         }
         else
         {
             std::cout << "Player wins!\n";
+            youWon = false;
         }
     }
 }
@@ -301,12 +285,56 @@ std::vector<cardInfo> dealerTurn(int dealerHandValue, std::vector<cardInfo> deal
 
 int main()
 {
-    runGameMenu();
     std::vector<cardInfo> dealerHand;
     std::vector<cardInfo> playerHand;
     cardInfo card;
-    std::string playerName = getPlayerName();
+    std::string playerName;
     std::vector<cardInfo> playerCards = {};
+    const int startBalance = 500;
+    int choice, balance, bet;
+    choice = displayMenu();
+    switch (choice)
+    {
+    case 1:
+        displayBlackjackRules();
+        displayTwistRules();
+        break;
+
+    case 2:
+        std::cout << "Loading saved game...\n";
+        askToLoadGame();
+        break;
+
+    case 3:
+        std::cout << "Starting a new game.\n";
+        std::string playerName = getPlayerName();
+        balance = startBalance;
+        break;
+
+    case 4:
+        std::cout << "Exiting the game, goodbye!.\n";
+        break;
+
+    default:
+        std::cout << "Invalid option, please try again.\n";
+        break;
+    }
+    bool isBetValid;
+    do
+    {
+        std::cout << "How much do you wanna bet? You have: " << balance;
+        std::cin >> bet;
+        if (bet > 0 && bet <= balance)
+        {
+            isBetValid = true;
+        }
+        else
+        {
+            std::cout << "Need to be between 0 " << balance;
+            isBetValid = false;
+        }
+
+    } while (isBetValid == false);
 
     //  Dealer draws first card
     dealerHand.push_back(DrawCard());
@@ -322,8 +350,12 @@ int main()
     playerHandValue = calculateHandValue(playerHand); // Calculate player's hand value
 
     // Determine the winner
-    determineWinner(playerHandValue, dealerHandValue);
+    if (determineWinner(playerHandValue, dealerHandValue) == true)
+    {
+        balance += bet * 2;
+    }
+    std::cout << "You have " << balance << " Left!";
+
     askToSaveOrContinue();
     return 0;
 }
->>>>>>> 3bca0bb67bcb2da3bfe6c9e5fb9e73cd0ee8e2a5

@@ -201,19 +201,19 @@ bool determineWinner(int playerHandValue, int dealerHandValue)
             return youWon = true;
         }
     }
-    else if (playerHandValue > 21)
+    else if (playerHandValue > 21 && dealerHandValue <= 21)
     {
         std::cout << "Player busts! Dealer wins.\n";
         return youWon = false;
     }
-    else if (dealerHandValue > 21)
+    else if (dealerHandValue > 21 && dealerHandValue <= 21)
     {
         std::cout << "Dealer busts! Player wins.\n";
         return youWon = true;
     }
     else
     {
-        if (playerHandValue >= dealerHandValue)
+        if (playerHandValue <= dealerHandValue)
         {
             std::cout << "Dealer wins!\n";
             return youWon = true;
@@ -333,11 +333,12 @@ int main()
         std::cin >> bet;
         if (bet > 0 && bet <= balance)
         {
+            balance -= bet;
             isBetValid = true;
         }
         else
         {
-            std::cout << "Need to be between 0 " << balance;
+            std::cout << "Need to be between 0 " << balance << std::endl;
             isBetValid = false;
         }
 
@@ -361,7 +362,7 @@ int main()
     {
         balance += bet * 2;
     }
-    std::cout << "You have " << balance << " Left!";
+    std::cout << "You have " << balance << std::endl;
 
     askToSaveOrContinue();
     return 0;

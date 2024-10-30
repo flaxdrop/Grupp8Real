@@ -237,4 +237,3 @@ int main()
     determineWinner(playerHandValue, dealerHandValue);
     return 0;
 }
->>>>>>> 3bca0bb67bcb2da3bfe6c9e5fb9e73cd0ee8e2a5

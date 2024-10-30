@@ -14,8 +14,8 @@ std::string getPlayerName()
 {
     std::string name;
     std::cout << "Please enter your name: ";
-    std::getline(std::cin, name);
-
+    std::cin >> name;
+    std::cout << "Your name is: " << name << std::endl;
     return name;
 }
 
@@ -193,35 +193,35 @@ bool determineWinner(int playerHandValue, int dealerHandValue)
         if (playerHandValue >= dealerHandValue)
         {
             std::cout << "Dealer wins!\n";
-            youWon = false;
+            return youWon = false;
         }
         else
         {
             std::cout << "Player wins!\n";
-            youWon = true;
+            return youWon = true;
         }
     }
     else if (playerHandValue > 21)
     {
         std::cout << "Player busts! Dealer wins.\n";
-        youWon = false;
+        return youWon = false;
     }
     else if (dealerHandValue > 21)
     {
         std::cout << "Dealer busts! Player wins.\n";
-        youWon = true;
+        return youWon = true;
     }
     else
     {
         if (playerHandValue >= dealerHandValue)
         {
             std::cout << "Dealer wins!\n";
-            youWon = true;
+            return youWon = true;
         }
         else
         {
             std::cout << "Player wins!\n";
-            youWon = false;
+            return youWon = false;
         }
     }
 }
@@ -312,7 +312,8 @@ int main()
         break;
 
     case 3:
-        std::cout << "Starting a new game.\n";
+        playerName = getPlayerName();
+        std::cout << "Starting a new game." << std::endl;
         balance = startBalance;
         break;
 
@@ -324,11 +325,11 @@ int main()
         std::cout << "Invalid option, please try again.\n";
         break;
     }
-    std::string playerName = getPlayerName();
     bool isBetValid;
     do
     {
-        std::cout << "How much do you wanna bet? You have: " << balance;
+        std::cout << "You have: " << balance << std::endl
+                  << "How much do you wanna bet? " << std::endl;
         std::cin >> bet;
         if (bet > 0 && bet <= balance)
         {

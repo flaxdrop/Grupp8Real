@@ -300,12 +300,20 @@ int main()
     int balance = 0;
     bool gameLoaded = false;
     
-    std::cout << "Select an option:\n";
-    std::cout << "1. Show game rules\n";
-    std::cout << "2. Load saved game\n";
-    std::cout << "3. Start a new game\n";
-    std::cout << "4. Exit\n";
-    std::cout << "Enter your choice: ";
+
+    std::cout << "\n\t****************************\n";
+    std::cout << "\t*    Welcome to Blackjack  *\n";
+    std::cout << "\t****************************\n";
+    std::cout << "\n\t╔═══════════════════════════╗";
+    std::cout << "\n\t║         MAIN MENU         ║";
+    std::cout << "\n\t╠═══════════════════════════╣";
+    std::cout << "\n\t║ 1. Show game rules        ║";
+    std::cout << "\n\t║ 2. Load saved game        ║";
+    std::cout << "\n\t║ 3. Start a new game       ║";
+    std::cout << "\n\t║ 4. Exit                   ║";
+    std::cout << "\n\t╚═══════════════════════════╝";
+    
+    std::cout << "\n\nEnter your choice: ";
     std::cin >> choice;
     switch (choice)
     {

@@ -53,11 +53,7 @@ void displayTwistRules()
     std::cout << "   - This twist allows you to swap one card from your hand with one of the dealer’s cards.\n";
     std::cout << "   - Choose wisely, as this twist can change the outcome significantly!\n\n";
 
-    std::cout << "4. Double Bet Twist:\n";
-    std::cout << "   - Triggering this twist automatically doubles the current bet, adding extra excitement and risk.\n";
-    std::cout << "   - You must have enough balance to cover the doubled bet, or the twist will be canceled.\n\n";
-
-    std::cout << "5. Twist Cards:\n";
+    std::cout << "4. Twist Cards:\n";
     std::cout << "   - Specific cards like the Ace of Spades or Queen of Hearts are designated as twist cards.\n";
     std::cout << "   - When a twist card is drawn by either the player or dealer, it triggers one of the twists above.\n\n";
 
@@ -65,56 +61,59 @@ void displayTwistRules()
     std::cout << "-----------------------------------------------------------------------------------------------\n\n\n";
 }
 
-bool askToLoadGame(int &playerScore) 
+bool askToLoadGame(int &playerScore)
 {
     std::ifstream infile("highscore.txt");
-    if (infile.good()) 
+    if (infile.good())
     {
         char choice;
         std::cout << "A saved highscore file was found. Do you want to load the game? (y/n): ";
         std::cin >> choice;
 
-        if (choice == 'y' || choice == 'Y') 
+        if (choice == 'y' || choice == 'Y')
         {
-                if (infile >> playerScore) 
-                {
+            if (infile >> playerScore)
+            {
                 std::cout << "Game loaded successfully! Player score: " << playerScore << "\n";
                 return true;
-            } else 
+            }
+            else
             {
                 std::cout << "Error reading saved game data.\n";
             }
         }
-    } else 
+    }
+    else
     {
         std::cout << "No saved game found.\n";
     }
     return false;
 }
 
-
-void askToSaveOrContinue(int balance) 
+void askToSaveOrContinue(int balance)
 {
     char choice;
     std::cout << "Do you want to save your game? (y/n): ";
     std::cin >> choice;
 
-    if (choice == 'y' || choice == 'Y') {
+    if (choice == 'y' || choice == 'Y')
+    {
         std::ofstream outfile("highscore.txt");
-        if (outfile.is_open()) 
+        if (outfile.is_open())
         {
             outfile << balance << "\n";
             std::cout << "Game saved successfully!\n";
-        } else 
+        }
+        else
         {
             std::cout << "Error saving the game.\n";
         }
-    } else 
+    }
+    else
     {
         std::cout << "Continuing the game...\n";
     }
 }
-
 
 // function to print game menu
 // int displayMenu()
@@ -298,49 +297,54 @@ int main()
     const int startBalance = 500;
     int choice, bet;
     int balance = 0;
+    int loop = true;
     bool gameLoaded = false;
-    
-
-    std::cout << "\n\t****************************\n";
-    std::cout << "\t*    Welcome to Blackjack  *\n";
-    std::cout << "\t****************************\n";
-    std::cout << "\n\t╔═══════════════════════════╗";
-    std::cout << "\n\t║         MAIN MENU         ║";
-    std::cout << "\n\t╠═══════════════════════════╣";
-    std::cout << "\n\t║ 1. Show game rules        ║";
-    std::cout << "\n\t║ 2. Load saved game        ║";
-    std::cout << "\n\t║ 3. Start a new game       ║";
-    std::cout << "\n\t║ 4. Exit                   ║";
-    std::cout << "\n\t╚═══════════════════════════╝";
-    
-    std::cout << "\n\nEnter your choice: ";
-    std::cin >> choice;
-    switch (choice)
+    do
     {
-    case 1:
-        displayBlackjackRules();
-        displayTwistRules();
-        break;
+        std::cout << "\n\t****************************\n";
+        std::cout << "\t*    Welcome to Blackjack  *\n";
+        std::cout << "\t****************************\n";
+        std::cout << "\n\t╔═══════════════════════════╗";
+        std::cout << "\n\t║         MAIN MENU         ║";
+        std::cout << "\n\t╠═══════════════════════════╣";
+        std::cout << "\n\t║ 1. Show game rules        ║";
+        std::cout << "\n\t║ 2. Load saved game        ║";
+        std::cout << "\n\t║ 3. Start a new game       ║";
+        std::cout << "\n\t║ 4. Exit                   ║";
+        std::cout << "\n\t╚═══════════════════════════╝";
 
-    case 2:
-        std::cout << "Loading saved game...\n";
-        gameLoaded = askToLoadGame(balance);
-        break;
+        std::cout << "\n\nEnter your choice: ";
+        std::cin >> choice;
+        switch (choice)
+        {
+        case 1:
+            displayBlackjackRules();
+            displayTwistRules();
+            break;
 
-    case 3:
-        playerName = getPlayerName();
-        std::cout << "Starting a new game." << std::endl;
-        balance = startBalance;
-        break;
+        case 2:
+            std::cout << "Loading saved game...\n";
+            gameLoaded = askToLoadGame(balance);
+            loop = false;
+            break;
 
-    case 4:
-        std::cout << "Exiting the game, goodbye!.\n";
-        break;
+        case 3:
+            playerName = getPlayerName();
+            std::cout << "Starting a new game." << std::endl;
+            balance = startBalance;
+            loop = false;
+            break;
 
-    default:
-        std::cout << "Invalid option, please try again.\n";
-        break;
-    }
+        case 4:
+            std::cout << "Exiting the game, goodbye!.\n";
+            break;
+
+        default:
+            std::cout << "Invalid option, please try again.\n";
+            break;
+        }
+    } while (loop == true);
+
     bool isBetValid;
     do
     {

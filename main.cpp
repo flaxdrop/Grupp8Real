@@ -5,11 +5,14 @@
 #include <vector>
 #include <string>
 #include <fstream>
+#include <cstdlib>
+#include <cctype>
 struct cardInfo // Storing card Value
 {
     int cardValue;              // The value to use when calc
     std::string cardInfomation; // String to display card
 };
+
 std::string getPlayerName()
 {
     std::string name;
@@ -119,24 +122,6 @@ void askToSaveOrContinue(int balance)
     }
 }
 
-// function to print game menu
-// int displayMenu()
-// {
-//     bool gameRunning = true;
-
-//     while (gameRunning)
-//     {
-//         int option;
-//         std::cout << "Select an option:\n";
-//         std::cout << "1. Show game rules\n";
-//         std::cout << "2. Load saved game\n";
-//         std::cout << "3. Start a new game\n";
-//         std::cout << "4. Exit\n";
-//         std::cout << "Enter your choice: ";
-//         std::cin >> option;
-//         return option;
-//     }
-// }
 class Deck
 {
 public:
@@ -291,6 +276,17 @@ std::vector<cardInfo> dealerTurn(int dealerHandValue, std::vector<cardInfo> deal
     return dealerHand;
 }
 
+// Function to check if the input string is a valid number
+bool isValidNumber(const std::string& str) 
+{
+    for (char const &c : str) 
+    {
+        if (std::isdigit(c) == 0) return false; // Check for non-digit characters
+    }
+    return true;
+}
+
+
 int main()
 {
     std::vector<cardInfo> dealerHand;
@@ -356,24 +352,30 @@ int main()
         }
     } while (loop == true);
 
-    bool isBetValid;
-    do
-    {
-        isBetValid = true;
-        std::cout << "You have: " << balance << std::endl
-                  << "How much do you wanna bet? ";
-        std::cin >> bet;
-        if (bet > 0 && bet <= balance)
-        {
-            isBetValid = true;
-        }
-        else
-        {
-            std::cout << "Need to be between 0 " << balance << std::endl;
-            isBetValid = false;
-        }
+std::string betInput; // String to capture input
+bool isBetValid;
 
-    } while (isBetValid == false);
+do
+{
+    isBetValid = false; // Set to false initially to enter the loop
+    std::cout << "You have: " << balance << std::endl
+              << "How much do you wanna bet? ";
+    std::cin >> betInput; // Read input as a string
+
+    // Validate input
+    if (isValidNumber(betInput)) {
+        bet = std::stoi(betInput); // Convert string to integer
+        if (bet > 0 && bet <= balance) {
+            isBetValid = true; // Valid bet
+        } else {
+            std::cout << "Bet must be between 1 and " << balance << std::endl;
+        }
+    } else {
+        std::cout << "Invalid input. Please enter a number." << std::endl; // Handle invalid input
+    }
+
+} while (!isBetValid);
+
 
     //  Dealer draws first card
     dealerHand.push_back(DrawCard());

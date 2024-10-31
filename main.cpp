@@ -403,12 +403,15 @@ int main()
         //  Dealer draws first card
         dealerHand.push_back(DrawCard());
         playerHand.push_back(DrawCard());
+        std::cout << "_______________________________________________________" << std::endl;
         std::cout << "Dealer draws: " << dealerHand.at(0).cardInfomation << std::endl;
         std::cout << playerName << " draws: " << playerHand.at(0).cardInfomation << std::endl;
         std::cout << "_______________________________________________________" << std::endl;
         int playerHandValue = 0, dealerHandValue = 0;
         playerHand = playerTurn(playerHandValue, playerHand, playerName);
+        std::cout << "_______________________________________________________" << std::endl;
         dealerHand = dealerTurn(dealerHandValue, dealerHand);
+        std::cout << "_______________________________________________________" << std::endl;
         // Calculate hand values
         dealerHandValue = calculateHandValue(dealerHand); // Calculate dealer's hand value
         playerHandValue = calculateHandValue(playerHand); // Calculate player's hand value

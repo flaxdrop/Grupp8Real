@@ -82,6 +82,10 @@ bool askToLoadGame(int &playerScore)
                 std::cout << "Error reading saved game data.\n";
             }
         }
+        else
+        {
+            return false;
+        }
     }
     else
     {
@@ -325,7 +329,14 @@ int main()
         case 2:
             std::cout << "Loading saved game...\n";
             gameLoaded = askToLoadGame(balance);
-            loop = false;
+            if (gameLoaded == false)
+            {
+                loop = true;
+            }
+            else if (gameLoaded == true)
+            {
+                loop = false;
+            }
             break;
 
         case 3:
@@ -348,8 +359,9 @@ int main()
     bool isBetValid;
     do
     {
+        isBetValid = true;
         std::cout << "You have: " << balance << std::endl
-                  << "How much do you wanna bet? " << std::endl;
+                  << "How much do you wanna bet? ";
         std::cin >> bet;
         if (bet > 0 && bet <= balance)
         {
@@ -357,7 +369,7 @@ int main()
         }
         else
         {
-            std::cout << "Need to be between 0 " << balance;
+            std::cout << "Need to be between 0 " << balance << std::endl;
             isBetValid = false;
         }
 

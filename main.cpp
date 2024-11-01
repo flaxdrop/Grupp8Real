@@ -228,7 +228,6 @@ std::vector<cardInfo> playerTurn(int playerHandValue, std::vector<cardInfo> play
         rndCurse = 1 + rand() % 10;
         srand(time(NULL));
         choice = 0;
-        std::cout << "Number for random curse: " << rndCurse << std::endl;
         if (rndCurse < 3)
         {
             playerHand.push_back(DrawCard());
@@ -437,9 +436,22 @@ int main()
             {
                 balance += bet * 2;
             }
-            std::cout << "You have " << balance << " Left!";
-        } while (askToContinue() == true);
-        askToSave(balance);
+            std::cout << "You have " << balance << "$ Left!";
+            if (balance > 0)
+            {
+                loop = askToContinue();
+            }
+            else
+            {
+                std::cout << "You are exiting the game!";
+                loop = false;
+            }
+
+        } while (loop == true);
+        if (balance > 0)
+        {
+            askToSave(balance);
+        }
     }
 
     return 0;

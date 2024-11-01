@@ -64,7 +64,7 @@ void displayTwistRules()
     std::cout << "-----------------------------------------------------------------------------------------------\n\n\n";
 }
 
-bool askToLoadGame(int &playerScore)
+bool askToLoadGame(int &playerScore, std::string &playerName)
 {
     std::ifstream infile("highscore.txt");
     if (infile.good())
@@ -75,9 +75,9 @@ bool askToLoadGame(int &playerScore)
 
         if (choice == 'y' || choice == 'Y')
         {
-            if (infile >> playerScore)
+            if (infile >> playerScore >> playerName)
             {
-                std::cout << "Game loaded successfully! Player score: " << playerScore << "\n";
+                std::cout << "Game loaded successfully! " << " score: " << playerScore << "\n";
                 return true;
             }
             else
@@ -97,7 +97,7 @@ bool askToLoadGame(int &playerScore)
     return false;
 }
 
-void askToSave(int balance)
+void askToSave(int balance, std::string playerName)
 {
     char choice;
     std::cout << "Do you want to save your game? (y/n): ";
@@ -109,6 +109,7 @@ void askToSave(int balance)
         if (outfile.is_open())
         {
             outfile << balance << "\n";
+            outfile << playerName << "\n";
             std::cout << "Game saved successfully!\n";
         }
         else
@@ -228,10 +229,10 @@ std::vector<cardInfo> playerTurn(int playerHandValue, std::vector<cardInfo> play
         rndCurse = 1 + rand() % 10;
         srand(time(NULL));
         choice = 0;
-        if (rndCurse < 3)
+        if (rndCurse <= 7)
         {
             playerHand.push_back(DrawCard());
-            std::cout << playerName << " gets cursed and draws: " << playerHand.back().cardInfomation << std::endl;
+            std::cout << playerName << " gets cursed and draws extra card: " << playerHand.back().cardInfomation << std::endl;
             playerHandValue = calculateHandValue(playerHand);
             std::cout << playerName << " have: " << playerHandValue << std::endl;
         }
@@ -348,7 +349,7 @@ int main()
 
         case 2:
             std::cout << "Loading saved game...\n";
-            gameLoaded = askToLoadGame(balance);
+            gameLoaded = askToLoadGame(balance, playerName);
             if (gameLoaded == false)
             {
                 loop = true;
@@ -450,7 +451,7 @@ int main()
         } while (loop == true);
         if (balance > 0)
         {
-            askToSave(balance);
+            askToSave(balance, playerName);
         }
     }
 

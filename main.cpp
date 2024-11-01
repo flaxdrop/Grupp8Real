@@ -48,17 +48,17 @@ void displayTwistRules()
     std::cout << "   - Drawn cards that trigger this twist allow you to take a 'free hit' without the risk of busting.\n";
     std::cout << "   - You can only use this twist once per turn when it's triggered.\n\n";
 
-    std::cout << "2. Reset Hand Value Twist:\n";
-    std::cout << "   - If this twist is triggered, it resets the hand value of either the player or dealer to 10.\n";
-    std::cout << "   - Useful for avoiding a bust or getting a strategic advantage.\n\n";
+    // std::cout << "2. Reset Hand Value Twist:\n";
+    // std::cout << "   - If this twist is triggered, it resets the hand value of either the player or dealer to 10.\n";
+    // std::cout << "   - Useful for avoiding a bust or getting a strategic advantage.\n\n";
 
-    std::cout << "3. Card Swap Twist:\n";
-    std::cout << "   - This twist allows you to swap one card from your hand with one of the dealer’s cards.\n";
-    std::cout << "   - Choose wisely, as this twist can change the outcome significantly!\n\n";
+    // std::cout << "3. Card Swap Twist:\n";
+    // std::cout << "   - This twist allows you to swap one card from your hand with one of the dealer’s cards.\n";
+    // std::cout << "   - Choose wisely, as this twist can change the outcome significantly!\n\n";
 
-    std::cout << "4. Twist Cards:\n";
-    std::cout << "   - Specific cards like the Ace of Spades or Queen of Hearts are designated as twist cards.\n";
-    std::cout << "   - When a twist card is drawn by either the player or dealer, it triggers one of the twists above.\n\n";
+    // std::cout << "4. Twist Cards:\n";
+    // std::cout << "   - Specific cards like the Ace of Spades or Queen of Hearts are designated as twist cards.\n";
+    // std::cout << "   - When a twist card is drawn by either the player or dealer, it triggers one of the twists above.\n\n";
 
     std::cout << "Good luck! Keep an eye out for twist cards and use them strategically to gain an advantage.\n";
     std::cout << "-----------------------------------------------------------------------------------------------\n\n\n";
@@ -229,7 +229,7 @@ std::vector<cardInfo> playerTurn(int playerHandValue, std::vector<cardInfo> play
         rndCurse = 1 + rand() % 10;
         srand(time(NULL));
         choice = 0;
-        if (rndCurse <= 7)
+        if (rndCurse <= 2)
         {
             playerHand.push_back(DrawCard());
             std::cout << playerName << " gets cursed and draws extra card: " << playerHand.back().cardInfomation << std::endl;

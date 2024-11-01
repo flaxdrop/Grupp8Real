@@ -64,7 +64,7 @@ void displayTwistRules()
     std::cout << "-----------------------------------------------------------------------------------------------\n\n\n";
 }
 
-bool askToLoadGame(int &playerScore)
+bool askToLoadGame(int &playerScore, std::string &playerName)
 {
     std::ifstream infile("highscore.txt");
     if (infile.good())
@@ -75,9 +75,9 @@ bool askToLoadGame(int &playerScore)
 
         if (choice == 'y' || choice == 'Y')
         {
-            if (infile >> playerScore)
+            if (infile >> playerScore >> playerName)
             {
-                std::cout << "Game loaded successfully! Player score: " << playerScore << "\n";
+                std::cout << "Game loaded successfully! " << " score: " << playerScore << "\n";
                 return true;
             }
             else
@@ -97,7 +97,7 @@ bool askToLoadGame(int &playerScore)
     return false;
 }
 
-void askToSave(int balance)
+void askToSave(int balance, std::string playerName)
 {
     char choice;
     std::cout << "Do you want to save your game? (y/n): ";
@@ -109,6 +109,7 @@ void askToSave(int balance)
         if (outfile.is_open())
         {
             outfile << balance << "\n";
+            outfile << playerName << "\n";
             std::cout << "Game saved successfully!\n";
         }
         else
@@ -222,10 +223,19 @@ std::vector<cardInfo> playerTurn(int playerHandValue, std::vector<cardInfo> play
 {
     bool isRoundEnd = false;
     int choice = 0;
+    int rndCurse;
     do
     {
+        rndCurse = 1 + rand() % 10;
         srand(time(NULL));
         choice = 0;
+        if (rndCurse <= 7)
+        {
+            playerHand.push_back(DrawCard());
+            std::cout << playerName << " gets cursed and draws extra card: " << playerHand.back().cardInfomation << std::endl;
+            playerHandValue = calculateHandValue(playerHand);
+            std::cout << playerName << " have: " << playerHandValue << std::endl;
+        }
         playerHand.push_back(DrawCard());
         std::cout << playerName << " draws: " << playerHand.back().cardInfomation << std::endl;
         playerHandValue = calculateHandValue(playerHand);
@@ -313,6 +323,7 @@ int main()
     int balance = 0;
     int loop = true;
     bool gameLoaded = false;
+    bool exitGame = false;
     do
     {
         std::cout << "\n\t****************************\n";
@@ -338,7 +349,7 @@ int main()
 
         case 2:
             std::cout << "Loading saved game...\n";
-            gameLoaded = askToLoadGame(balance);
+            gameLoaded = askToLoadGame(balance, playerName);
             if (gameLoaded == false)
             {
                 loop = true;
@@ -358,6 +369,8 @@ int main()
 
         case 4:
             std::cout << "Exiting the game, goodbye!.\n";
+            exitGame = true;
+            loop = false;
             break;
 
         default:
@@ -368,62 +381,79 @@ int main()
 
     std::string betInput; // String to capture input
     bool isBetValid;
-
-    do
+    if (exitGame == false)
     {
-        isBetValid = false; // Set to false initially to enter the loop
-        std::cout << "You have: " << balance << std::endl
-                  << "How much do you wanna bet? ";
-        std::cin >> betInput; // Read input as a string
-
-        // Validate input
-        if (isValidNumber(betInput))
+        do
         {
-            bet = std::stoi(betInput); // Convert string to integer
-            if (bet > 0 && bet <= balance)
+            do
             {
-                isBetValid = true; // Valid bet
-                balance -= bet;
+                isBetValid = false; // Set to false initially to enter the loop
+                std::cout << "You have: " << balance << std::endl
+                          << "How much do you wanna bet? ";
+                std::cin >> betInput; // Read input as a string
+
+                // Validate input
+                if (isValidNumber(betInput))
+                {
+                    bet = std::stoi(betInput); // Convert string to integer
+                    if (bet > 0 && bet <= balance)
+                    {
+                        isBetValid = true; // Valid bet
+                        balance -= bet;
+                    }
+                    else
+                    {
+                        std::cout << "Bet must be between 1 and " << balance << std::endl;
+                    }
+                }
+                else
+                {
+                    std::cout << "Invalid input. Please enter a number." << std::endl; // Handle invalid input
+                }
+
+            } while (!isBetValid);
+
+            dealerHand.clear();
+            playerHand.clear();
+            //  Dealer draws first card
+            dealerHand.push_back(DrawCard());
+            playerHand.push_back(DrawCard());
+            std::cout << "_______________________________________________________" << std::endl;
+            std::cout << "Dealer draws: " << dealerHand.at(0).cardInfomation << std::endl;
+            std::cout << playerName << " draws: " << playerHand.at(0).cardInfomation << std::endl;
+            std::cout << "_______________________________________________________" << std::endl;
+            int playerHandValue = 0, dealerHandValue = 0;
+            playerHand = playerTurn(playerHandValue, playerHand, playerName);
+            std::cout << "_______________________________________________________" << std::endl;
+            dealerHand = dealerTurn(dealerHandValue, dealerHand);
+            std::cout << "_______________________________________________________" << std::endl;
+            // Calculate hand values
+            dealerHandValue = calculateHandValue(dealerHand); // Calculate dealer's hand value
+            playerHandValue = calculateHandValue(playerHand); // Calculate player's hand value
+
+            // Determine the winner
+            bool youWon = determineWinner(playerHandValue, dealerHandValue);
+            if (youWon == true)
+            {
+                balance += bet * 2;
+            }
+            std::cout << "You have " << balance << "$ Left!" << std::endl;
+            if (balance > 0)
+            {
+                loop = askToContinue();
             }
             else
             {
-                std::cout << "Bet must be between 1 and " << balance << std::endl;
+                std::cout << "You are exiting the game!";
+                loop = false;
             }
-        }
-        else
-        {
-            std::cout << "Invalid input. Please enter a number." << std::endl; // Handle invalid input
-        }
 
-    } while (!isBetValid);
-    do
-    {
-        dealerHand.clear();
-        playerHand.clear();
-        //  Dealer draws first card
-        dealerHand.push_back(DrawCard());
-        playerHand.push_back(DrawCard());
-        std::cout << "_______________________________________________________" << std::endl;
-        std::cout << "Dealer draws: " << dealerHand.at(0).cardInfomation << std::endl;
-        std::cout << playerName << " draws: " << playerHand.at(0).cardInfomation << std::endl;
-        std::cout << "_______________________________________________________" << std::endl;
-        int playerHandValue = 0, dealerHandValue = 0;
-        playerHand = playerTurn(playerHandValue, playerHand, playerName);
-        std::cout << "_______________________________________________________" << std::endl;
-        dealerHand = dealerTurn(dealerHandValue, dealerHand);
-        std::cout << "_______________________________________________________" << std::endl;
-        // Calculate hand values
-        dealerHandValue = calculateHandValue(dealerHand); // Calculate dealer's hand value
-        playerHandValue = calculateHandValue(playerHand); // Calculate player's hand value
-
-        // Determine the winner
-        bool youWon = determineWinner(playerHandValue, dealerHandValue);
-        if (youWon == true)
+        } while (loop == true);
+        if (balance > 0)
         {
-            balance += bet * 2;
+            askToSave(balance, playerName);
         }
-        std::cout << "You have " << balance << " Left!";
-    } while (askToContinue() == true);
-    askToSave(balance);
+    }
+
     return 0;
 }

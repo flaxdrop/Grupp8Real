@@ -4,6 +4,7 @@
 #include <algorithm>
 #include <random>
 #include <string>
+#include <ctime>
 
 using namespace std;
 
@@ -116,6 +117,7 @@ void saveBalance(int balance)
 
 void playGame(int &balance)
 {
+    srand(static_cast<unsigned>(time(0))); // Seed random number generator
     Deck deck;
     vector<Card> playerHand, dealerHand;
     char choice;
@@ -146,25 +148,52 @@ void playGame(int &balance)
              << (dealerHand[0].value == 1 ? "A" : (dealerHand[0].value > 10 ? "10" : to_string(dealerHand[0].value)))
              << " of " << dealerHand[0].suit << "\n";
 
+        bool playerBusted = false;
+
         // Player's turn
         while (true)
         {
             displayHand(playerHand, "Player");
+
             if (calculateScore(playerHand) > 21)
             {
                 cout << "You bust! You lose $" << bet << "\n";
                 balance -= bet;
+                playerBusted = true;
                 break;
             }
+
             cout << "Do you want to (H)it or (S)tand? ";
             cin >> choice;
+
             if (choice == 'S' || choice == 's')
-                break;
-            playerHand.push_back(deck.drawCard());
+            {
+                // 20% chance to unintentionally hit instead of standing
+                if (rand() % 5 == 0) // 1 in 5 chance
+                {
+                    cout << "Oops! You tried to stand, but hit instead!\n";
+                    playerHand.push_back(deck.drawCard());
+                }
+                else
+                {
+                    break;
+                }
+            }
+            else if (choice == 'H' || choice == 'h')
+            {
+                playerHand.push_back(deck.drawCard());
+
+                // 20% chance to unintentionally draw an extra card
+                if (rand() % 5 == 0) // 1 in 5 chance
+                {
+                    cout << "Lucky double! You drew an extra card!\n";
+                    playerHand.push_back(deck.drawCard());
+                }
+            }
         }
 
         // Dealer's turn (only if player didn't bust)
-        if (calculateScore(playerHand) <= 21)
+        if (!playerBusted && calculateScore(playerHand) <= 21)
         {
             while (calculateScore(dealerHand) < 17)
             {

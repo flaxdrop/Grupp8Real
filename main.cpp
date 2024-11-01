@@ -229,7 +229,7 @@ std::vector<cardInfo> playerTurn(int playerHandValue, std::vector<cardInfo> play
         srand(time(NULL));
         choice = 0;
         std::cout << "Number for random curse: " << rndCurse << std::endl;
-        if (rndCurse < 9)
+        if (rndCurse < 3)
         {
             playerHand.push_back(DrawCard());
             std::cout << playerName << " gets cursed and draws: " << playerHand.back().cardInfomation << std::endl;

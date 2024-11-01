@@ -55,6 +55,7 @@ void displayBlackjackRules()
     cout << "3. Dealer must hit until reaching a minimum of 17.\n";
     cout << "4. You can hit or stand on your turn.\n";
     cout << "-------------------------------------\n";
+    cout << "This game of blackjack has some twist!! Play a few hands and find out what they are!";
 }
 
 int calculateScore(const vector<Card> &hand)

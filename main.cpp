@@ -222,10 +222,20 @@ std::vector<cardInfo> playerTurn(int playerHandValue, std::vector<cardInfo> play
 {
     bool isRoundEnd = false;
     int choice = 0;
+    int rndCurse;
     do
     {
+        rndCurse = 1 + rand() % 10;
         srand(time(NULL));
         choice = 0;
+        std::cout << "Number for random curse: " << rndCurse << std::endl;
+        if (rndCurse < 9)
+        {
+            playerHand.push_back(DrawCard());
+            std::cout << playerName << " gets cursed and draws: " << playerHand.back().cardInfomation << std::endl;
+            playerHandValue = calculateHandValue(playerHand);
+            std::cout << playerName << " have: " << playerHandValue << std::endl;
+        }
         playerHand.push_back(DrawCard());
         std::cout << playerName << " draws: " << playerHand.back().cardInfomation << std::endl;
         playerHandValue = calculateHandValue(playerHand);
@@ -313,7 +323,7 @@ int main()
     int balance = 0;
     int loop = true;
     bool gameLoaded = false;
-    bool exitGame = true;
+    bool exitGame = false;
     do
     {
         std::cout << "\n\t****************************\n";
@@ -375,33 +385,34 @@ int main()
     {
         do
         {
-            isBetValid = false; // Set to false initially to enter the loop
-            std::cout << "You have: " << balance << std::endl
-                      << "How much do you wanna bet? ";
-            std::cin >> betInput; // Read input as a string
-
-            // Validate input
-            if (isValidNumber(betInput))
+            do
             {
-                bet = std::stoi(betInput); // Convert string to integer
-                if (bet > 0 && bet <= balance)
+                isBetValid = false; // Set to false initially to enter the loop
+                std::cout << "You have: " << balance << std::endl
+                          << "How much do you wanna bet? ";
+                std::cin >> betInput; // Read input as a string
+
+                // Validate input
+                if (isValidNumber(betInput))
                 {
-                    isBetValid = true; // Valid bet
-                    balance -= bet;
+                    bet = std::stoi(betInput); // Convert string to integer
+                    if (bet > 0 && bet <= balance)
+                    {
+                        isBetValid = true; // Valid bet
+                        balance -= bet;
+                    }
+                    else
+                    {
+                        std::cout << "Bet must be between 1 and " << balance << std::endl;
+                    }
                 }
                 else
                 {
-                    std::cout << "Bet must be between 1 and " << balance << std::endl;
+                    std::cout << "Invalid input. Please enter a number." << std::endl; // Handle invalid input
                 }
-            }
-            else
-            {
-                std::cout << "Invalid input. Please enter a number." << std::endl; // Handle invalid input
-            }
 
-        } while (!isBetValid);
-        do
-        {
+            } while (!isBetValid);
+
             dealerHand.clear();
             playerHand.clear();
             //  Dealer draws first card

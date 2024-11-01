@@ -436,7 +436,7 @@ int main()
             {
                 balance += bet * 2;
             }
-            std::cout << "You have " << balance << "$ Left!";
+            std::cout << "You have " << balance << "$ Left!" << std::endl;
             if (balance > 0)
             {
                 loop = askToContinue();

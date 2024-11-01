@@ -1,5 +1,5 @@
-
 #include <iostream>
+#include <fstream>
 #include <vector>
 #include <algorithm>
 #include <random>
@@ -7,14 +7,12 @@
 
 using namespace std;
 
-// Card structure to store card value and suit
 struct Card
 {
     string suit;
     int value;
 };
 
-// Deck class to initialize, shuffle, and draw cards
 class Deck
 {
     vector<Card> cards;
@@ -48,23 +46,31 @@ public:
     }
 };
 
-// Function to calculate hand value, treating Ace as 1 or 11
+void displayBlackjackRules()
+{
+    cout << "Blackjack Rules:\n";
+    cout << "1. Try to get as close to 21 as possible without going over.\n";
+    cout << "2. Face cards are worth 10. Aces are worth 1 or 11.\n";
+    cout << "3. Dealer must hit until reaching a minimum of 17.\n";
+    cout << "4. You can hit or stand on your turn.\n";
+    cout << "-------------------------------------\n";
+}
+
 int calculateScore(const vector<Card> &hand)
 {
     int score = 0, aces = 0;
     for (const Card &card : hand)
     {
         if (card.value >= 10)
-            score += 10; // Face cards (J, Q, K)
+            score += 10;
         else if (card.value == 1)
-        { // Ace
+        {
             score += 11;
             aces++;
         }
         else
             score += card.value;
 
-        // Adjust if score > 21 and there are aces counted as 11
         while (score > 21 && aces > 0)
         {
             score -= 10;
@@ -74,7 +80,6 @@ int calculateScore(const vector<Card> &hand)
     return score;
 }
 
-// Display hand function for player and dealer
 void displayHand(const vector<Card> &hand, const string &name)
 {
     cout << name << "'s hand: ";
@@ -86,43 +91,43 @@ void displayHand(const vector<Card> &hand, const string &name)
     cout << " (Score: " << calculateScore(hand) << ")\n";
 }
 
-// Display game rules
-void displayGameRules()
+int loadBalance()
 {
-    cout << "Blackjack Rules:\n";
-    cout << "1. The goal of the game is to get as close to 21 as possible without going over.\n";
-    cout << "2. Face cards (Jack, Queen, King) are worth 10, Aces are worth 1 or 11.\n";
-    cout << "3. The dealer must draw cards until reaching at least 17.\n";
-    cout << "4. If you go over 21, you bust and lose the round.\n";
-    cout << "5. If you beat the dealer's score without busting, you win.\n";
-    cout << "----------------------------------------\n";
+    ifstream inFile("savefile.txt");
+    int balance = 1000; // Default starting balance if no save file
+    if (inFile)
+    {
+        inFile >> balance;
+        cout << "Balance loaded from save: $" << balance << "\n";
+    }
+    else
+    {
+        cout << "No save file found. Starting with default balance: $" << balance << "\n";
+    }
+    return balance;
 }
 
-// Menu function
-void showMenu()
+void saveBalance(int balance)
 {
-    cout << "Welcome to the Blackjack Game!\n";
-    cout << "1. View Game Rules\n";
-    cout << "2. Start Game\n";
-    cout << "3. Load Game (Not implemented yet)\n";
-    cout << "4. Exit\n";
-    cout << "Enter your choice: ";
+    ofstream outFile("savefile.txt");
+    outFile << balance;
+    cout << "Game saved! Balance: $" << balance << " has been saved.\n";
 }
 
-// Game function to start a new Blackjack round
-void startGame()
+void playGame(int &balance)
 {
     Deck deck;
     vector<Card> playerHand, dealerHand;
     char choice;
-    int bet, balance = 1000; // Starting balance for player
+    int bet;
 
     while (true)
     {
-        // Start a new round
         playerHand.clear();
         dealerHand.clear();
-        cout << "Balance: $" << balance << "\nPlace your bet: ";
+
+        // Betting
+        cout << "\nBalance: $" << balance << "\nPlace your bet: ";
         cin >> bet;
 
         if (bet > balance)
@@ -131,13 +136,12 @@ void startGame()
             continue;
         }
 
-        // Initial deal: two cards for player and dealer
+        // Initial deal
         playerHand.push_back(deck.drawCard());
         playerHand.push_back(deck.drawCard());
         dealerHand.push_back(deck.drawCard());
         dealerHand.push_back(deck.drawCard());
 
-        // Display the dealer's first card
         cout << "Dealer's visible card: "
              << (dealerHand[0].value == 1 ? "A" : (dealerHand[0].value > 10 ? "10" : to_string(dealerHand[0].value)))
              << " of " << dealerHand[0].suit << "\n";
@@ -162,24 +166,17 @@ void startGame()
         // Dealer's turn (only if player didn't bust)
         if (calculateScore(playerHand) <= 21)
         {
-            // Show the dealer's visible card
-            cout << "Dealer's visible card: "
-                 << (dealerHand[0].value == 1 ? "A" : (dealerHand[0].value > 10 ? "10" : to_string(dealerHand[0].value)))
-                 << " of " << dealerHand[0].suit << "\n";
-
-            // The dealer will draw cards until reaching a score of 17 or higher
             while (calculateScore(dealerHand) < 17)
             {
                 dealerHand.push_back(deck.drawCard());
             }
 
-            // Show the dealer's full hand after drawing
-            cout << "Dealer's full hand: ";
             displayHand(dealerHand, "Dealer");
 
             // Determine outcome
             int playerScore = calculateScore(playerHand);
             int dealerScore = calculateScore(dealerHand);
+
             if (dealerScore > 21 || playerScore > dealerScore)
             {
                 cout << "You win! You gain $" << bet << "\n";
@@ -196,12 +193,13 @@ void startGame()
             }
         }
 
-        // Check if player wants to continue
+        // Check if player wants to play another round
         if (balance <= 0)
         {
             cout << "You're out of money! Game over.\n";
             break;
         }
+
         cout << "Play another round? (Y/N): ";
         cin >> choice;
         if (choice == 'N' || choice == 'n')
@@ -211,28 +209,48 @@ void startGame()
 
 int main()
 {
-    int choice;
-    while (true)
+    int balance = 1000;
+    char choice;
+    bool gameRunning = true;
+
+    while (gameRunning)
     {
-        showMenu();
+        cout << "\nMenu:\n";
+        cout << "1. View Game Rules\n";
+        cout << "2. Start Game\n";
+        cout << "3. Load Game\n";
+        cout << "4. Exit\n";
+        cout << "Choose an option: ";
         cin >> choice;
 
         switch (choice)
         {
-        case 1:
-            displayGameRules();
+        case '1':
+            displayBlackjackRules();
             break;
-        case 2:
-            startGame();
+        case '2':
+            balance = 1000; // Start fresh with default balance
+            playGame(balance);
             break;
-        case 3:
-            cout << "Load Game is not implemented yet.\n";
+        case '3':
+            balance = loadBalance();
+            playGame(balance);
             break;
-        case 4:
-            cout << "Exiting the game. Goodbye!\n";
-            return 0;
+        case '4':
+            char saveChoice;
+            cout << "Would you like to save your game before exiting? (Y/N): ";
+            cin >> saveChoice;
+            if (saveChoice == 'Y' || saveChoice == 'y')
+            {
+                saveBalance(balance);
+            }
+            gameRunning = false;
+            cout << "Exiting the game.\n";
+            break;
         default:
-            cout << "Invalid choice. Please try again.\n";
+            cout << "Invalid option. Please try again.\n";
         }
     }
+
+    return 0;
 }
